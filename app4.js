@@ -2,7 +2,8 @@ let apiUrl = "https://opentdb.com/api.php?amount=50";
 
 let questions = [];
 let questionIndex = 0;
-let userAnswer = "";
+let correctAnswer = "";
+//let userAnswer = "";
 
 axios.get(apiUrl).then(showQuestion);
 
@@ -20,24 +21,29 @@ function showQuestion(response) {
   categoryPart.innerHTML = questions[questionIndex].category;
 
   let correctAnswer = questions[questionIndex].correct_answer;
+  let answers = questions[questionIndex].incorrect_answers;
+  console.log(answers);
+  answers.push(correctAnswer); // adds element/s to the end of the array. In this case the correct answer is added to the incorrecy answer array
+  console.log(answers);
 
-  console.log(correctAnswer);
+  let shuffledAnswers = shuffleAnswers(answers);
+  console.log(shuffledAnswers);
 
   let answerOne = document.querySelector("#firstAnswer");
-  answerOne.innerHTML = correctAnswer;
+  answerOne.innerHTML = shuffledAnswers[0];
   let answerTwo = document.querySelector("#secondAnswer");
-  answerTwo.innerHTML = questions[questionIndex].incorrect_answers[0];
+  answerTwo.innerHTML = shuffledAnswers[1];
   let answerThree = document.querySelector("#thirdAnswer");
-  answerThree.innerHTML = questions[questionIndex].incorrect_answers[1];
+  answerThree.innerHTML = shuffledAnswers[2];
   let answerFour = document.querySelector("#fourthAnswer");
-  answerFour.innerHTML = questions[questionIndex].incorrect_answers[2];
-  function checkAnswer() {
-    alert(correctAnswer);
-  }
-
-  let showAnswer = document.querySelector("#answerButton");
-  showAnswer.addEventListener("click", checkAnswer);
+  answerFour.innerHTML = shuffledAnswers[3];
 }
+function checkAnswer() {
+  alert(correctAnswer);
+}
+
+let showAnswer = document.querySelector("#answerButton");
+showAnswer.addEventListener("click", checkAnswer);
 
 function nextQuestion() {
   axios.get(apiUrl).then(showQuestion);
@@ -45,3 +51,21 @@ function nextQuestion() {
 
 let nextButton = document.querySelector("#next");
 nextButton.addEventListener("click", nextQuestion);
+
+function shuffleAnswers(answersArray) {
+  let answersInRandomOrder = [];
+  for (let i = 0; (l = answersArray.length); i < l, i++) {
+    console.log(i);
+    console.log(l);
+
+    let randomIndex = Math.floor(Math.random() * answersArray.length);
+    let item = answersArray.splice(randomIndex, 1);
+    //The splice() method changes the contents of an array by removing or replacing existing elements
+
+    console.log(item);
+    answersInRandomOrder = answersInRandomOrder.concat(item);
+    //The concat() method is used to merge two or more arrays.
+    //This method does not change the existing arrays, but instead returns a new array.
+  }
+  return answersInRandomOrder;
+}
